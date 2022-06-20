@@ -45,10 +45,6 @@ pipeline {
   }
 
   stages {
-    // validate project info
-    stage('Validate Build') { steps { script {
-      setPipelineDefaults(config, requiredValues)
-    }}}
 
     stage('SCM') { steps { script {
       github.addLabel(env, 'Building...')
