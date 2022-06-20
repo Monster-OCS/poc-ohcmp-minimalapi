@@ -155,10 +155,10 @@ pipeline {
         when {
           expression { return config.deploy_to.isEmpty() == false }
         }
-        steps {
+        steps { script {
           docker.withRegistry("https://${config.registry_id}", "jenkins-jfrog") {
             docker.image("${config.registry_id}/${config.group_id}/${config.service_name}").push("latest")
-          }
+          }}
 
         }
 
