@@ -1,8 +1,5 @@
 // evaluate the body block, and collect configuration into the object
 Map config = [:]
-body.resolveStrategy = Closure.DELEGATE_FIRST
-body.delegate = config
-body()
 
 // required pipeline values
 List requiredValues = [ ]
