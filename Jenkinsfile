@@ -131,7 +131,7 @@ pipeline {
 
     stage('Build') {
        steps { script {
-        docker.build("${config.service_name}:latest")
+        docker.build("${config.registry_id}/${config.group_id}/${config.service_name}:latest")
       }}
 
       post {
