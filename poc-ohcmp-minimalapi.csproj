@@ -11,4 +11,17 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+	<ItemGroup>
+		<MyTextFile Include="version.txt"/>
+	</ItemGroup>
+
+	<Target Name="WriteVersion" AfterTargets="CopyFilesToOutputDirectory">
+		<Message Text="Writing Version $(AssemblyVersion)" Importance="high" />
+		<WriteLinesToFile
+            File="$(OutputPath)version.txt"
+            Lines="$(AssemblyVersion)"
+            Overwrite="true"
+            Encoding="Unicode"/>
+	</Target>
+
 </Project>
