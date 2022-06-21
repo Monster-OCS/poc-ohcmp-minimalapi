@@ -218,16 +218,16 @@ pipeline {
         if(config.skipDeploy == false) {
           dir('additional/infrastructure') {
             git branch: 'main' , url: 'https://github.com/Monster-OCS/ohcmp-helm-charts.git', credentialsId: 'github_ocs_jenkins'
-          }
-          for(env in config.all_envs) {
-            stage("Deploy-${env}") {
-              if(config.deploy_to.contains(env)) {
-                lock("ohcmp-deploy-${env}") {
-                  config.tf_vars['image_id'] = config.zip_version_name
-                  deploy(env, config.service_name, config.version )
+            for(env in config.all_envs) {
+              stage("Deploy-${env}") {
+                if(config.deploy_to.contains(env)) {
+                  lock("ohcmp-deploy-${env}") {
+                    config.tf_vars['image_id'] = config.zip_version_name
+                    deploy(env, config.service_name, config.version )
+                  }
+                }else {
+                  echo "Skipped deploy to ${env}"
                 }
-              }else {
-                echo "Skipped deploy to ${env}"
               }
             }
           }
