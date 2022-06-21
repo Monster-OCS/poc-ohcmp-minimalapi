@@ -5,6 +5,8 @@ VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "poc-ohcmp-minimalapi", "poc-ohcmp-minimalapi.csproj", "{9C6761AF-5F3F-4EF5-8E85-F4B2BF54A753}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "poc-ohcmp-minimalapi.Tests", "Tests\poc-ohcmp-minimalapi.Tests.csproj", "{B4D4839D-B8D4-4F68-96C0-36A4FC70EBBC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{9C6761AF-5F3F-4EF5-8E85-F4B2BF54A753}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C6761AF-5F3F-4EF5-8E85-F4B2BF54A753}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C6761AF-5F3F-4EF5-8E85-F4B2BF54A753}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4D4839D-B8D4-4F68-96C0-36A4FC70EBBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4D4839D-B8D4-4F68-96C0-36A4FC70EBBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4D4839D-B8D4-4F68-96C0-36A4FC70EBBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4D4839D-B8D4-4F68-96C0-36A4FC70EBBC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
