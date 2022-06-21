@@ -96,7 +96,7 @@ pipeline {
       config.tf_vars = [:]
       config.zip_name = "${config.service_name}.zip"
       //TODO - generated for now
-      config.version = "1.0.0.0-${GIT_COMMIT[0..6]}"
+      config.version = "1.0.0.${currentBuild.startTimeInMillis}-${GIT_COMMIT[0..6]}"
       config.zip_version_name = "${config.service_name}-${env.BUILD_TAG}.zip"
       config.repo_name = "ocs-binary-prod"
 
