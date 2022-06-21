@@ -95,7 +95,7 @@ pipeline {
       config.all_envs = ['ams-dev', 'ams-qax5', 'ams-qax6', 'qax7', 'ams-staging', 'ams-prod']
       config.tf_vars = [:]
       config.zip_name = "${config.service_name}.zip"
-      #TODO - generated for now
+      //TODO - generated for now
       config.version = "1.0.0.0-${GIT_COMMIT[0..6]}"
       config.zip_version_name = "${config.service_name}-${env.BUILD_TAG}.zip"
       config.repo_name = "ocs-binary-prod"
