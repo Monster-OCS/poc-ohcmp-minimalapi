@@ -1,3 +1,42 @@
+//update in version repository
+def update_version(environment, service, version) {
+  def versions = [:]
+  def versions_filename = "ohcmp-apps/versions-${environment}.yaml"
+  lock("versions") {
+    try {
+      versions = readYaml file:versions_filename
+    } catch (Exception ex) {
+      //version file for this environment doesn't exists yet
+      println ex
+    }
+    //update service version
+    versions.remove(service)
+    versions.put(service, ["image": ["tag": "${version}"]])
+    writeYaml file:versions_filename, data:versions.sort(), overwrite: true
+    //push to repository
+    withCredentials([usernamePassword(credentialsId: 'github_ocs_jenkins', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+      try {
+        sh """
+          printf \'#!/bin/bash\necho username=${GIT_USERNAME}\necho password=${GIT_PASSWORD}\' > credential-helper.sh
+          git config credential.helper "/bin/bash ${env.WORKSPACE}/additional/infrastructure/credential-helper.sh"
+          git add ${versions_filename}
+          git config --global user.email "ocs-jenkins-github@monster.com"
+          git config --global user.name "Jenkins"
+          git commit -m "[CI] Version update"
+          git push --set-upstream origin main
+        """
+      } catch (Exception ex) {
+        println "Nothing to commit in to version repository. Skipping."
+      }
+    }
+  }
+}
+
+def deploy(env, service, version) {
+  update_version(env, service, version)
+  echo "Deploy to ${env}"
+}
+
 // evaluate the body block, and collect configuration into the object
 Map config = [:]
 
@@ -56,6 +95,8 @@ pipeline {
       config.all_envs = ['ams-dev', 'ams-qax5', 'ams-qax6', 'qax7', 'ams-staging', 'ams-prod']
       config.tf_vars = [:]
       config.zip_name = "${config.service_name}.zip"
+      #TODO - generated for now
+      config.version = "1.0.0.0-${GIT_COMMIT[0..6]}"
       config.zip_version_name = "${config.service_name}-${env.BUILD_TAG}.zip"
       config.repo_name = "ocs-binary-prod"
 
@@ -131,7 +172,7 @@ pipeline {
 
     stage('Build') {
        steps { script {
-        docker.build("${config.registry_id}/${config.group_id}/${config.service_name}:latest")
+        docker.build("${config.registry_id}/${config.group_id}/${config.service_name}:${config.version}", "--build-arg version=${config.version}")
       }}
 
       post {
@@ -150,7 +191,7 @@ pipeline {
         }
         steps { script {
           docker.withRegistry("https://${config.registry_id}", "jenkins-jfrog") {
-            docker.image("${config.registry_id}/${config.group_id}/${config.service_name}").push("latest")
+            docker.image("${config.registry_id}/${config.group_id}/${config.service_name}").push(config.version)
           }}
 
         }
@@ -159,7 +200,7 @@ pipeline {
             success {
               script {
                 github.addLabel(env, 'Image:'+config.zip_version_name)
-                github.addLabel(env, 'Version:'+config.appversion)
+                github.addLabel(env, 'Version:'+config.version)
                 github.updateStatus(env, true)
               }
             }
@@ -167,6 +208,34 @@ pipeline {
               script { github.updateStatus(env, false) }
             }
         }
+    }
+
+    stage('Deploy') {
+      when {
+        expression { return config.deploy_to.isEmpty() == false }
+      }
+      steps { script {
+        if(config.skipDeploy == false) {
+          dir('additional/infrastructure') {
+            git branch: 'main' , url: 'https://github.com/Monster-OCS/ohcmp-helm-charts.git', credentialsId: 'github_ocs_jenkins'
+          }
+          for(env in config.all_envs) {
+            stage("Deploy-${env}") {
+              if(config.deploy_to.contains(env)) {
+                lock("ohcmp-deploy-${env}") {
+                  config.tf_vars['image_id'] = config.zip_version_name
+                  deploy(env, config.service_name, config.version )
+                }
+              }else {
+                echo "Skipped deploy to ${env}"
+              }
+            }
+          }
+        }else {
+          echo "Deploy skipped due pipeline configuration: skipDeploy = true"
+        }
+      }}
+
     }
 
 
