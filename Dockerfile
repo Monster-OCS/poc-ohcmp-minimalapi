@@ -13,6 +13,5 @@ FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 COPY --from=build-env /app/out .
 ENTRYPOINT ["dotnet", "poc-ohcmp-minimalapi.dll"]
-CMD ["--urls","http://localhost:8080;http://localhost:9090"]
 EXPOSE 8080
 EXPOSE 9090
