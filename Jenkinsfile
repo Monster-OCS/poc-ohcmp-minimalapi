@@ -172,7 +172,7 @@ pipeline {
 
     stage('Build') {
        steps { script {
-        docker.build("${config.registry_id}/${config.group_id}/${config.service_name}:${config.version}", "--build-arg version=${config.version} .")
+        docker.build("${config.registry_id}/${config.group_id}/${config.service_name}:${config.version}", "--build-arg VERSION=${config.version} .")
       }}
 
       post {
