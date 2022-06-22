@@ -151,7 +151,7 @@ pipeline {
 
       if(config.deploy_to.isEmpty()) {
         //dev
-        if(( (env.GIT_BRANCH != "main") && (!env.GIT_BRANCH =~ /^PR-/) ) && ( config.gitcommitmsg =~ /\/dev/)) {
+        if(( (env.GIT_BRANCH != "main") && !(env.GIT_BRANCH =~ /^PR-/) ) && ( config.gitcommitmsg =~ /\/dev/)) {
           config.deploy_to.add('ams-dev')
         }
         //prod
