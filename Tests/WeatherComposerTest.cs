@@ -5,6 +5,7 @@ namespace poc_ohcmp_minimalapi.Tests;
 
 public class WeatherComposerTest
 {
+    //for test with NUnit see https://docs.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit
     [Fact]
     public void GetForecast_NoInput_Returns()
     {
