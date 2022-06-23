@@ -46,11 +46,12 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
+//test endpoint calling onprem
 app.MapGet("/ping", async ([FromServices]IHttpClientFactory httpClientFactory) =>
 {
     //GET internal-services.lexus.monster.com/seeker/api/seeker/ping
     var client = httpClientFactory.CreateClient();
-    HttpResponseMessage response = await client.GetAsync("https://internal-services.lexus.monster.com/seeker/api/seeker/ping");
+    HttpResponseMessage response = await client.GetAsync("https://internal-services.lexus.monster.com/Seeker/api/v1/ping");
     var result = await response.Content.ReadAsStringAsync();
     return result;
 })
