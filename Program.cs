@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +12,7 @@ builder.Services.AddSwaggerGen();
 //https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-6.0&viewFallbackFrom=aspnetcore-2.2
 //liveness probe - at this point we are always ok
 builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy());
-
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
@@ -44,6 +45,16 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 })
 .WithName("GetWeatherForecast");
+
+app.MapGet("/ping", async ([FromServices]IHttpClientFactory httpClientFactory) =>
+{
+    //GET internal-services.lexus.monster.com/seeker/api/seeker/ping
+    var client = httpClientFactory.CreateClient();
+    HttpResponseMessage response = await client.GetAsync("https://internal-services.lexus.monster.com/seeker/api/seeker/ping");
+    var result = await response.Content.ReadAsStringAsync();
+    return result;
+})
+.WithName("GetPing");
 
 //registration of liveness (self check)
 app.MapHealthChecks("/health/liveness", new HealthCheckOptions
