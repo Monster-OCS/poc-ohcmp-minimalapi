@@ -32,7 +32,7 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-app.MapGet("/weatherforecast", () =>
+app.MapGet("/minimalapi/weatherforecast", () =>
 {
     var forecast =  Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
@@ -47,7 +47,7 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast");
 
 //test endpoint calling onprem
-app.MapGet("/ping", async ([FromServices]IHttpClientFactory httpClientFactory) =>
+app.MapGet("/minimalapi/ping", async ([FromServices]IHttpClientFactory httpClientFactory) =>
 {
     using (var httpClientHandler = new HttpClientHandler())
     {
