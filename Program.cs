@@ -49,18 +49,12 @@ app.MapGet("/minimalapi/weatherforecast", () =>
 //test endpoint calling onprem
 app.MapGet("/minimalapi/ping", async ([FromServices]IHttpClientFactory httpClientFactory) =>
 {
-    using (var httpClientHandler = new HttpClientHandler())
-    {
-        httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
-        //GET internal-services.lexus.monster.com/seeker/api/seeker/ping
-        using (var client = new HttpClient(httpClientHandler))
-        {
-            HttpResponseMessage response = await client.GetAsync("https://internal-services.lexus.monster.com/Seeker/api/v1/ping");
-            var result = await response.Content.ReadAsStringAsync();
-            return result;
-        }
-    }
-
+    //this is a quick sample, not prod code template, need revision
+    //GET internal-services.lexus.monster.com/seeker/api/seeker/ping
+    var client = GetClient(httpClientFactory);
+    HttpResponseMessage response = await client.GetAsync("https://internal-services.lexus.monster.com/Seeker/api/v1/ping");
+    var result = await response.Content.ReadAsStringAsync();
+    return result;
 })
 .WithName("GetPing");
 
@@ -76,10 +70,21 @@ app.MapHealthChecks("/health/readiness", new HealthCheckOptions
     Predicate = r => r.Tags.Contains("services")
 }).RequireHost("*:9090");
 
-
-
-
 app.Run();
+
+//there may be some better way with named clients or something else and we should check around using statement ...
+//https://docs.microsoft.com/en-us/aspnet/core/fundamentals/http-requests?view=aspnetcore-6.0
+HttpClient GetClient(IHttpClientFactory httpClientFactory)
+{
+    if (app.Environment.IsDevelopment())
+    {
+        var httpClientHandler = new HttpClientHandler();
+        httpClientHandler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+        return new HttpClient(httpClientHandler);
+    }
+
+    return httpClientFactory.CreateClient();
+}
 
 record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
 {
