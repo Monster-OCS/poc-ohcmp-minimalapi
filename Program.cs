@@ -41,7 +41,7 @@ app.MapGet("/minimalapi/weatherforecast", () =>
             Random.Shared.Next(-20, 55),
             summaries[Random.Shared.Next(summaries.Length)]
         ))
-        .ToArray();
+        .ToArray(); 
     return forecast;
 })
 .WithName("GetWeatherForecast");
