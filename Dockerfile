@@ -4,6 +4,7 @@ ARG VERSION=1.0.0.0
 
 # Copy everything
 COPY . ./
+RUN dotnet clean
 # Restore as distinct layers
 RUN dotnet restore
 # Build and publish a release
